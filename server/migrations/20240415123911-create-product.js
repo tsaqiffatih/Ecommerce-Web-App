@@ -11,41 +11,27 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        allowNull:false,
-        validate:{
-          notNull: {msg: 'name is required'},
-          notEmpty: {msg: 'name is required'}
-        }
-      },
-      description: {
-        type: Sequelize.STRING,
-        allowNull:false,
-        validate:{
-          notNull: {msg: 'description is required'},
-          notEmpty: {msg: 'description is required'}
+        allowNull: false,
+        validate: {
+          notNull: { msg: 'name is required' },
+          notEmpty: { msg: 'name is required' }
         }
       },
       price: {
         type: Sequelize.INTEGER,
-        allowNull:false,
-        validate:{
-          notNull: {msg: 'price is required'},
-          notEmpty: {msg: 'price is required'}
+        allowNull: false,
+        validate: {
+          notNull: { msg: 'price is required' },
+          notEmpty: { msg: 'price is required' }
         }
       },
-      userId: {
-        type: Sequelize.INTEGER,
-        allowNull:false,
-        validate:{
-          notNull: {msg: 'userId is required'},
-          notEmpty: {msg: 'userId is required'}
-        },
-        references: {
-          model: 'Users',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+      imageUrl: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        validate: {
+          notNull: { msg: 'ImageUrl is required' },
+          notEmpty: { msg: 'ImageUrl is required' }
+        }
       },
       createdAt: {
         allowNull: false,

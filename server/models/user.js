@@ -11,8 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      User.hasMany(models.Product, { foreignKey: 'userId' });
-      User.hasOne(models.ShoppingCart, { foreignKey: 'userId' });
+      User.hasMany(models.Order, {foreignKey: 'userId'});
     }
   }
   User.init({
@@ -20,10 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     phoneNumber: DataTypes.STRING,
-    role: {
-      type:DataTypes.STRING,
-      defaultValue: 'customer'
-    }
   }, {
     hooks: {
       beforeCreate(user) {

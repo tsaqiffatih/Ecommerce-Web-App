@@ -2,20 +2,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Categories', {
+    await queryInterface.createTable('Orders', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING,
+      userId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        validate: {
-          notNull: { msg: 'category name is required' },
-          notEmpty: { msg: 'category name is required' }
+        references: {
+          model: 'Users',
+          key: 'id'
         }
+      },
+      totalAmount: {
+        type: Sequelize.INTEGER
+      },
+      status: {
+        type: Sequelize.STRING,
+        defaultValue: 'pending'
+      },
+      transactionToken: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -28,6 +38,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Categories');
+    await queryInterface.dropTable('Orders');
   }
 };

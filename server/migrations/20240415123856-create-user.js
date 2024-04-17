@@ -39,10 +39,6 @@ module.exports = {
       phoneNumber: {
         type: Sequelize.STRING
       },
-      role: {
-        type: Sequelize.STRING,
-        defaultValue: "customer"
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
