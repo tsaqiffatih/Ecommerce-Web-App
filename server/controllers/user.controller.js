@@ -1,8 +1,9 @@
 const { User } = require('../models')
-const {comparePassword} = require('../helper/bcrypt')
-const {createToken} = require('../helper/jwt')
+const { comparePassword } = require('../helper/bcrypt')
+const { createToken } = require('../helper/jwt')
 const { OAuth2Client } = require('google-auth-library');
 const { where } = require('sequelize');
+const clientId = process.env.CLIENT_ID
 
 class userController {
 
@@ -54,35 +55,44 @@ class userController {
 
     static async loginUserWithGoogle(req, res, next) {
         try {
-            const { google_token } = req.headers
-            const client = new OAuth2Client()
+            const { google_token } = req.headers;
+            // console.log(req.headers);
+            
+            const client = new OAuth2Client();
+
             const ticket = await client.verifyIdToken({
-                idToken: token,
-                audience: "327393961797-76i7f899lt4u2gbckuqsh3shnal3gp0a.apps.googleusercontent.com",
+                idToken: google_token,
+                audience: clientId,
             });
             const payload = ticket.getPayload();
 
-            const { user, created } = await User.findOrCreate({
-                where: { email: payload.email },
-                defaults: {
-                    fullname: payload.name,
-                    email: payload.email,
-                    password: `password${payload.name}`
-                }
-            })
+            const { email, name } = payload;
+            // console.log(email);
 
-            let token = createToken({
+            const [ user, created ] = await User.findOrCreate({
+                where: { email: email },
+                defaults: {
+                    fullName: name,
+                    email,
+                    password: `password${name}`
+                }
+            });
+
+            // console.log(created);
+            // console.log(user);
+            const token = createToken({
                 email: user.email,
             });
 
-            res.status(200).json({ token })
+            res.status(200).json({ token });
 
         } catch (error) {
             console.log(error);
             res.send(error)
-            next(error)
+            next(error);
         }
     }
+
 
     // Get all users
     static async getUsers(req, res) {
@@ -112,7 +122,7 @@ class userController {
     static async updateUser(req, res) {
         try {
             const { id } = req.params;
-            const {fullName,email,password,phoneNumber} = req.body
+            const { fullName, email, password, phoneNumber } = req.body
 
             const updated = await User.update(req.body, {
                 where: { id }

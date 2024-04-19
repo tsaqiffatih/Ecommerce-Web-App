@@ -7,24 +7,26 @@ class orderController {
     static async createOrder(req, res, next) {
         try {
             const { totalAmount } = req.body;
+            // console.log(totalAmount, "<<<<<<");
             const { id } = req.user
             const userId = id
 
             const user = await User.findByPk(id)
-
             if (!user) throw { name: 'invalid' }
 
-            if (!user.phoneNumber) {
-                return null
-            }
+
             const snap = new midtransClient.Snap({
                 isProduction: false,
-                serverKey: process.env.SERVER_KEY
+                serverKey: process.env.SERVER_KEY,
+                clientKey: process.env.CLIENT_KEY
             });
+            // console.log(user);
+
+            const orderId = Date.now() - Math.floor(Math.random() * 1000)
 
             const parameter = {
                 "transaction_details": {
-                    "order_id": (Math.random() * 1000) + 2,
+                    "order_id": orderId,
                     "gross_amount": totalAmount
                 },
                 "credit_card": {
@@ -32,10 +34,10 @@ class orderController {
                 },
                 "customer_details": {
                     "fullName": user.fullname,
-                    "email": user.email,
-                    "phone": "08111222333"
+                    "email": user.email
                 }
             };
+
 
             const transaction = await snap.createTransaction(parameter);
 
@@ -44,16 +46,36 @@ class orderController {
             const url = transaction.redirect_url;
 
             // creat order dengan status pending, simpan token transaksi
-            const order = await Order.create({ userId, totalAmount, status: 'pending', transactionToken });
+            const order = await Order.create({ userId, totalAmount, status: 'pending', transactionToken,orderId });
 
-            // console.log(url);
             res.status(200).json({
-                transaction
+                token: transactionToken,
+                redirect_url: url,
+                order_Id: orderId
             })
         } catch (error) {
             console.log(error);
             res.send(error);
-            // next(error);
+            next(error);
+        }
+    };
+
+
+    // Update order status
+    static async updateOrder(req, res, next) {
+        try {
+            const { order_id } = req.headers;
+            console.log(order_id, '<<<<<<');
+            const order = await Order.findOne({ where: { order_id } });
+            // if (!order) {
+            //     return res.status(404).json({ message: 'Order not found' });
+            // }
+            const totalAmount = order.totalAmount;
+            const status = order.status;
+            await order.save();
+            res.status(200).json(status);
+        } catch (error) {
+            next(error);
         }
     };
 
@@ -76,24 +98,6 @@ class orderController {
             if (!order) {
                 return res.status(404).json({ message: 'Order not found' });
             }
-            res.status(200).json(order);
-        } catch (error) {
-            next(error);
-        }
-    };
-
-    // Update order by ID
-    static async updateOrderById(req, res, next) {
-        try {
-            const { orderId } = req.params;
-            const { totalAmount, status } = req.body;
-            const order = await Order.findByPk(orderId);
-            if (!order) {
-                return res.status(404).json({ message: 'Order not found' });
-            }
-            order.totalAmount = totalAmount;
-            order.status = status;
-            await order.save();
             res.status(200).json(order);
         } catch (error) {
             next(error);

@@ -31,6 +31,7 @@ module.exports = {
             next();
             // console.log(verify.email);
         } catch (error) {
+            console.log(error);
             next(error)
         }
     }
