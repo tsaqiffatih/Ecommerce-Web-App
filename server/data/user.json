@@ -1,0 +1,32 @@
+[
+    {
+        "fullName": "Korry Statefield",
+        "email": "user1@mail.com",
+        "password": "user",
+        "phoneNumber": "088-888-888"
+    },
+    {
+        "fullName": "Sigismondo Issacof",
+        "email": "user2@mail.com",
+        "password": "user",
+        "phoneNumber": "088-888-888"
+    },
+    {
+        "fullName": "Richart Roddie",
+        "email": "user3@mail.com",
+        "password": "user",
+        "phoneNumber": "088-888-888"
+    },
+    {
+        "fullName": "Hulda Parrott",
+        "email": "user4@mail.com",
+        "password": "user",
+        "phoneNumber": "088-888-888"
+    },
+    {
+        "fullName": "Chastity Feldmesser",
+        "email": "user5@mail.com",
+        "password": "user",
+        "phoneNumber": "088-888-888"
+    }
+]
