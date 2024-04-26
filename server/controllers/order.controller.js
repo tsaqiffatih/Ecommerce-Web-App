@@ -7,8 +7,8 @@ class orderController {
     static async createOrder(req, res, next) {
         try {
             const { totalAmount } = req.body;
-            // console.log(totalAmount, "<<<<<<");
-            const { id } = req.user
+
+            const { id } = req.userData
             const userId = id
 
             const user = await User.findByPk(id)
@@ -20,7 +20,6 @@ class orderController {
                 serverKey: process.env.SERVER_KEY,
                 clientKey: process.env.CLIENT_KEY
             });
-            // console.log(user);
 
             const orderId = Date.now() - Math.floor(Math.random() * 1000)
 
@@ -44,9 +43,9 @@ class orderController {
             // ambil token transaksi
             const transactionToken = transaction.token;
             const url = transaction.redirect_url;
+            console.log(url);
 
-            // creat order dengan status pending, simpan token transaksi
-            const order = await Order.create({ userId, totalAmount, status: 'pending', transactionToken,orderId });
+            const order = await Order.create({ userId, totalAmount, status: 'pending', transactionToken, orderId });
 
             res.status(200).json({
                 token: transactionToken,
@@ -55,7 +54,6 @@ class orderController {
             })
         } catch (error) {
             console.log(error);
-            res.send(error);
             next(error);
         }
     };
@@ -66,7 +64,7 @@ class orderController {
         try {
             const { order_id } = req.headers;
             console.log(order_id, '<<<<<<');
-            const order = await Order.findOne({ where: { order_id } });
+            const order = await Order.findOne({ where: { id: order_id } });
             // if (!order) {
             //     return res.status(404).json({ message: 'Order not found' });
             // }
@@ -75,31 +73,7 @@ class orderController {
             await order.save();
             res.status(200).json(status);
         } catch (error) {
-            next(error);
-        }
-    };
-
-
-    // Get all orders
-    static async getAllOrders(req, res, next) {
-        try {
-            const orders = await Order.findAll();
-            res.status(200).json(orders);
-        } catch (error) {
-            next(error);
-        }
-    };
-
-    // Get order by ID
-    static async getOrderById(req, res, next) {
-        try {
-            const { orderId } = req.params;
-            const order = await Order.findByPk(orderId);
-            if (!order) {
-                return res.status(404).json({ message: 'Order not found' });
-            }
-            res.status(200).json(order);
-        } catch (error) {
+            console.log(error);
             next(error);
         }
     };
@@ -114,6 +88,23 @@ class orderController {
             }
             await order.destroy();
             res.status(204).end();
+        } catch (error) {
+            console.log(error);
+            // next(error);
+        }
+    };
+
+    // Get order by ID
+    static async getOrderByUserId(req, res, next) {
+        try {
+            const { id } = req.userData
+            const order = await Order.findAll({
+                where: { UserId: id }
+            })
+            if (!order) {
+                return res.status(404).json({ message: 'Order not found' });
+            }
+            res.status(200).json(order);
         } catch (error) {
             next(error);
         }

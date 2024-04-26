@@ -53,6 +53,9 @@ const errorHandler = (err, req, res, next) => {
         return res.status(401).json({
             message: "Price must be greater than 1000",
         });
+    } else {
+        res.status(500).json({ message: "Internal server error" });
+        console.log(err);
     }
 
     if (err.message === "Unexpected end of form") {
@@ -61,8 +64,6 @@ const errorHandler = (err, req, res, next) => {
         });
     }
 
-    res.status(500).json({ message: "Internal server error" });
-    console.log(err);
 };
 
 module.exports = errorHandler;

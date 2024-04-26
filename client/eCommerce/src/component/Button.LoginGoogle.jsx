@@ -17,7 +17,7 @@ function GoogleLoginButton() {
         }
       })
       console.log(data.token);
-      localStorage.setItem('token',data.token)
+      localStorage.setItem('access_token',data.token)
       navigate('/')
     } catch (error) {
       console.log(error);

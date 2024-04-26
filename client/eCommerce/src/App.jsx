@@ -1,24 +1,35 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import NavbarComponent from "./component/Navbar.component";
+import { BrowserRouter as Router, Routes, Route, createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./page/Home.page";
 import LoginPage from "./page/Login.page";
 import RegisterPage from "./page/Register.page";
-import GoogleLoginButton from "./component/Button.LoginGoogle";
+import MainLayout from "./component/MainLayout";
 
 function App() {
+  const router = createBrowserRouter([
+    {
+      element: <MainLayout />,
+      children: [
+        {
+          path: "/login",
+          element: <LoginPage />
+        },
+        {
+          path: "/register",
+          element: <RegisterPage />
+        },
+        {
+          path: "/",
+          element: <HomePage />
+        }
+      ]
+
+    }
+  ])
+
   return (
-    <Router>
-      <NavbarComponent />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Routes>
-    </Router>
-    // <>
-    //   <NavbarComponent />
-    //   <GoogleLoginButton />
-    // </>
+    <>
+      <RouterProvider router={router} />
+    </>
   );
 }
 

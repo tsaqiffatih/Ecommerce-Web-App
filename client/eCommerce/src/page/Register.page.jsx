@@ -1,10 +1,48 @@
 import { DarkThemeToggle, useThemeMode } from "flowbite-react";
-
+import LocalRequest from "../utils/axios";
+import Swal from 'sweetalert2'
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 
 function RegisterPage() {
     const { toggleMode } = useThemeMode()
 
+    const [input, setInput] = useState({
+        fullname:'',
+        email: '',
+        password: '',
+        phoneNumber:''
+    })
+    const navigate = useNavigate()
+
+    const handleChange = (e) => {
+        setInput({ ...input, [e.target.name]: e.target.value })
+    }
+
+    const handleForm = async (e) => {
+        e.preventDefault()
+        try {
+            await LocalRequest({
+                method: 'post',
+                url: '/credentials/register',
+                data: input
+            })
+
+            navigate("/login")
+            // console.log('berhasil!!!')
+
+        } catch (error) {
+            console.log(error)
+            Swal.fire({
+                icon: 'error',
+                title: 'error',
+                text: `${error.response.data.message}!!!`
+            })
+        }
+    }
+
+    console.log(input);
     return (
         <>
             <div className="grid gap-8">
@@ -13,13 +51,13 @@ function RegisterPage() {
                     className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-[26px] m-4 "
                 >
                     <div className="border-[20px] border-transparent rounded-[20px] dark:bg-gray-900 bg-white shadow-lg xl:p-10 2xl:p-10 lg:p-10 md:p-10 sm:p-2 m-2">
-                    {/* <DarkThemeToggle/> */}
+                        {/* <DarkThemeToggle/> */}
 
                         <h1 className="pt-8 pb-6 font-bold text-5xl dark:text-gray-400 text-center cursor-default">
                             Sign Up
                         </h1>
 
-                        <form action="#" method="post" className="space-y-4">
+                        <form className="space-y-4" onSubmit={handleForm}>
                             <div>
                                 <label htmlFor="base" className="mb-2 dark:text-gray-400 text-lg">
                                     Full Name
@@ -29,6 +67,8 @@ function RegisterPage() {
                                     type="text"
                                     placeholder="Full Name"
                                     required=""
+                                    name="fullName"
+                                    onChange={handleChange}
                                 />
                             </div>
                             <div>
@@ -40,6 +80,8 @@ function RegisterPage() {
                                     type="email"
                                     placeholder="Email"
                                     required=""
+                                    name="email"
+                                    onChange={handleChange}
                                 />
                             </div>
                             <div>
@@ -54,6 +96,8 @@ function RegisterPage() {
                                     type="password"
                                     placeholder="Password"
                                     required=""
+                                    name="password"
+                                    onChange={handleChange}
                                 />
                             </div>
                             <div>
@@ -68,6 +112,8 @@ function RegisterPage() {
                                     type="number"
                                     placeholder="Phone Number"
                                     required=""
+                                    name="phoneNumber"
+                                    onChange={handleChange}
                                 />
                             </div>
                             <button
@@ -83,14 +129,14 @@ function RegisterPage() {
                                 <span className="cursor-default dark:text-gray-300">
                                     Already have an account?
                                 </span>
-                                <a
+                                <Link to={'/login'}
                                     className="group text-blue-400 transition-all duration-100 ease-in-out"
                                     href="#"
                                 >
                                     <span className="bg-left-bottom ml-1 bg-gradient-to-r from-blue-400 to-blue-400 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">
                                         Sign In
                                     </span>
-                                </a>
+                                </Link >
                             </h3>
                         </div>
 

@@ -1,11 +1,54 @@
 import GoogleLoginButton from "../component/Button.LoginGoogle";
 import reacLogo from '../assets/react.svg'
 import { DarkThemeToggle, useThemeMode } from "flowbite-react";
+import axios from 'axios'
+import LoginWithGithub from "../component/Button.LoginGithub";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import LocalRequest from "../utils/axios";
+import Swal from "sweetalert2";
+import { useDispatch, useSelector } from "react-redux";
+
 
 
 function LoginPage() {
-//    <GoogleLoginButton/>
 
+    let [input, setInput] = useState({
+        email: '',
+        password: ''
+    })
+
+    const handleInput = (e) => {
+        setInput({
+            ...input, [e.target.name]: e.target.value,
+        })
+    };
+
+    const navigate = useNavigate()
+
+    const handleForm = async (e) => {
+
+        e.preventDefault()
+        try {
+            const { data } = await axios({
+                method: 'post',
+                url: 'http://localhost:3000/credentials/login',
+                data: input,
+            });
+
+            // console.log(data.user_token, '<<<<');
+            localStorage.setItem('access_token', data.user_token)
+
+            navigate("/")
+        } catch (error) {
+            console.log(error)
+            Swal.fire({
+                icon: 'error',
+                title: 'error',
+                text: error.response.data.message
+            })
+        }
+    }
 
     return (
         <>
@@ -17,12 +60,12 @@ function LoginPage() {
                     <div className="border-[20px] border-transparent rounded-[20px] dark:bg-gray-900 bg-white shadow-lg xl:p-10 2xl:p-10 lg:p-10 md:p-10 sm:p-2 m-2">
 
                         {/* <DarkThemeToggle/> */}
-                        
+
                         <h1 className="pt-8 pb-6 font-bold text-5xl dark:text-gray-400 text-center cursor-default">
                             Sign In
                         </h1>
 
-                        <form action="#" method="post" className="space-y-4">
+                        <form className="space-y-4" onSubmit={handleForm}>
                             <div>
                                 <label htmlFor="email" className="mb-2 dark:text-gray-400 text-lg">
                                     Email
@@ -32,7 +75,8 @@ function LoginPage() {
                                     className="border dark:bg-indigo-700 dark:text-gray-300 dark:border-gray-700 p-3 shadow-md placeholder:text-base border-gray-300 rounded-lg w-full focus:scale-105 ease-in-out duration-300"
                                     type="email"
                                     placeholder="Email"
-                                    required=""
+                                    name="email"
+                                    onChange={handleInput}
                                 />
                             </div>
                             <div>
@@ -47,7 +91,8 @@ function LoginPage() {
                                     className="border dark:bg-indigo-700 dark:text-gray-300 dark:border-gray-700 p-3 mb-2 shadow-md placeholder:text-base border-gray-300 rounded-lg w-full focus:scale-105 ease-in-out duration-300"
                                     type="password"
                                     placeholder="Password"
-                                    required=""
+                                    name="password"
+                                    onChange={handleInput}
                                 />
                             </div>
                             <button
@@ -63,14 +108,15 @@ function LoginPage() {
                                 <span className="cursor-default dark:text-gray-300">
                                     Doesn't have an account?
                                 </span>
-                                <a
+                                <Link
+                                    to={'/register'}
                                     className="group text-blue-400 transition-all duration-100 ease-in-out"
                                     href="#"
                                 >
                                     <span className="bg-left-bottom ml-1 bg-gradient-to-r from-blue-400 to-blue-400 bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">
                                         Sign up
                                     </span>
-                                </a>
+                                </Link>
                             </h3>
                         </div>
                         {/* Third Party Authentication Options */}
@@ -91,9 +137,9 @@ function LoginPage() {
                         <div
                             id="third-party-auth"
                             className="flex items-center justify-center mt-5 flex-wrap"
-                            >
-                            {/* <GoogleLoginButton/> ini tombol login Google */}
-                            <GoogleLoginButton/>
+                        >
+                            {/*ini tombol login Google */}
+                            <GoogleLoginButton />
                             {/* dibawah ini tombol login Linkedin */}
                             <button
                                 href="#"
@@ -116,40 +162,9 @@ function LoginPage() {
                                     alt="Github"
                                 />
                             </button>
-                            {/* dibawah ini tombol login Facebook */}
-                            <button
-                                href="#"
-                                className="hover:scale-105 ease-in-out duration-300 shadow-lg p-2 rounded-lg m-1"
-                            >
-                                <img
-                                    className="max-w-[25px]"
-                                    src="https://ucarecdn.com/6f56c0f1-c9c0-4d72-b44d-51a79ff38ea9/"
-                                    alt="Facebook"
-                                />
-                            </button>
-                            {/* dibawah ini tombol login Twitter */}
-                            <button
-                                href="#"
-                                className="hover:scale-105 ease-in-out duration-300 shadow-lg p-2 rounded-lg m-1"
-                            >
-                                <img
-                                    className="max-w-[25px] dark:gray-100"
-                                    src="https://ucarecdn.com/82d7ca0a-c380-44c4-ba24-658723e2ab07/"
-                                    alt="twitter"
-                                />
-                            </button>
-                            {/* dibawah ini tombol login Apple */}
-                            <button
-                                href="#"
-                                className="hover:scale-105 ease-in-out duration-300 shadow-lg p-2 rounded-lg m-1"
-                            >
-                                <img
-                                    className="max-w-[25px]"
-                                    src="https://ucarecdn.com/3277d952-8e21-4aad-a2b7-d484dad531fb/"
-                                    alt="apple"
-                                />
-                            </button>
+                            
                         </div>
+                        <LoginWithGithub />
                         <div className="text-gray-500 flex text-center flex-col mt-4 items-center text-sm">
                             <p className="cursor-default">
                                 By signing in, you agree to our

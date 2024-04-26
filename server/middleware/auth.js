@@ -7,7 +7,6 @@ module.exports = {
         try {
             let access = req.headers.authorization;
 
-
             if (!access) throw { name: "Invalid Token" };
             let [bearer, token] = access.split(" ");
 
@@ -23,7 +22,7 @@ module.exports = {
 
             if (!user) throw { name: "Invalid Token" };
 
-            req.user = {
+            req.userData = {
                 id: user.id,
                 email: user.email
             };

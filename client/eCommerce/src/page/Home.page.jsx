@@ -1,47 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import CardComponent from "../component/Card.component";
 import LocalRequest from "../utils/axios";
 import axios from "axios";
-
+import { fetchData } from "../store/homeSlice";
 
 
 function HomePage() {
-    const [items, setItems] = useState(null)
+    const dispatch = useDispatch();
+    const data = useSelector((state) => state.home.data);
 
-    const fetchData = async () => {
-        try {
-            const {data} = await axios({
-                method: 'get',
-                url: 'http://localhost:3000/products/getAll'
-            })
-
-            setItems(data)
-            // console.log(data);
-        } catch (error) {
-            console.log(error);
-        }
-    }
 
     useEffect(() => {
-        fetchData()
-    }, [])
+        dispatch(fetchData(dispatch));
+    }, [dispatch]);
 
-
-    // console.log(items, '<<<<<')
     return (
         <>
             <div className="flex flex-wrap justify-around">
-                {items &&
-                    items.map((item) => {
-                        return <CardComponent
-                            key={item.id}
-                            item={item}
-                        />
-                    })
-                }
+                {data &&
+                    data.map((item) => {
+                        return <CardComponent key={item.id} item={item} />;
+                    })}
             </div>
         </>
-    )
+    );
 }
 
 export default HomePage;
