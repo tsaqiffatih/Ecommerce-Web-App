@@ -1,5 +1,4 @@
 
-```markdown
 # E-commerce Web Application
 
 This is a web-based E-commerce application built with modern web technologies. It provides a platform for users to browse and purchase products online, with features such as user authentication, third-party login, product listing, shopping cart, and a secure checkout process.
